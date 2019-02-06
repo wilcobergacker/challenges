@@ -7,30 +7,45 @@ import random
 
 from data import DICTIONARY, LETTER_SCORES, POUCH
 
-NUM_LETTERS = 7
+NUM_LETTERS = 12j
 
 
 def draw_letters():
     """Pick NUM_LETTERS letters randomly. Hint: use stdlib random"""
-    pass
+    return random.sample(POUCH, NUM_LETTERS)
+
 
 
 def input_word(draw):
     """Ask player for a word and validate against draw.
     Use _validation(word, draw) helper."""
-    pass 
+    while True:
+        word = input("Form a valid word:").upper()
+        try:
+            return _validation(word, draw)
+        except ValueError as e:
+            print(e)
+            continue
 
 
 
 def _validation(word, draw):
     """Validations: 1) only use letters of draw, 2) valid dictionary word"""
-    pass
+    for char in word.upper():
+        if char in draw:
+            draw.remove(char)
+        else:
+            raise ValueError("{} is not a valid word!".format(word))
+    if not word.lower() in DICTIONARY:
+        raise ValueError('Not a valid dictionary word, try again')
+    return word
 
 
 # From challenge 01:
 def calc_word_value(word):
     """Calc a given word value based on Scrabble LETTER_SCORES mapping"""
     return sum(LETTER_SCORES.get(char.upper(), 0) for char in word)
+
 
 
 # Below 2 functions pass through the same 'draw' argument (smell?).
@@ -40,18 +55,22 @@ def calc_word_value(word):
 def get_possible_dict_words(draw):
     """Get all possible words from draw which are valid dictionary words.
     Use the _get_permutations_draw helper and DICTIONARY constant"""
-    pass
+    permutations = [''.join(word).lower() for word in _get_permutations_draw(draw)]
+    return set(permutations) & set(DICTIONARY)
 
 
 def _get_permutations_draw(draw):
     """Helper for get_possible_dict_words to get all permutations of draw letters.
     Hint: use itertools.permutations"""
-    pass
+    for i in range(1,8):
+        yield from list(itertools.permutations(draw, i))
 
 
 # From challenge 01:
 def max_word_value(words):
     """Calc the max value of a collection of words"""
+    if words is None:
+        words = load_words()
     return max(words, key=calc_word_value)
 
 
@@ -77,3 +96,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
