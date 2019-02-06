@@ -13,6 +13,10 @@ NUM_TWEETS = 100
 
 Tweet = namedtuple('Tweet', 'id_str created_at text')
 
+auth = tweepy.OAuthHandler(CONSUMER_KEY,CONSUMER_SECRET)
+auth.set_access_token(ACCESS_TOKEN,ACCESS_SECRET)
+API = tweepy.API(auth)
+
 
 class UserTweets(object):
 
@@ -22,7 +26,9 @@ class UserTweets(object):
         to create api interface.
         Use _get_tweets() helper to get a list of tweets.
         Save the tweets as data/<handle>.csv"""
-        # ...
+        self.handle = handle
+        self.max_id = max_id
+        self.output_file = '{}.{}'.format(os.path.join(DEST_DIR, self.handle), EXT)
         self._tweets = list(self._get_tweets())
         self._save_tweets()
 
@@ -31,27 +37,31 @@ class UserTweets(object):
         See tweepy API reference: http://docs.tweepy.org/en/v3.5.0/api.html
         Use a list comprehension / generator to filter out fields
         id_str created_at text (optionally use namedtuple)"""
-        pass
+        tweets = API.user_timeline(self.handle, count=NUM_TWEETS, max_id=self.max_id)
+        return (Tweet(s.id_str, s.created_at, s.text.replace('\n', '')) for s in tweets)
 
     def _save_tweets(self):
         """Use the csv module (csv.writer) to write out the tweets.
         If you use a namedtuple get the column names with Tweet._fields.
         Otherwise define them as: id_str created_at text
         You can use writerow for the header, writerows for the rows"""
-        pass
+        with open(self.output_file, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(Tweet._fields)
+            writer.writerow(self._tweets)
 
     def __len__(self):
         """See http://pybit.es/python-data-model.html"""
-        pass
+        return len(self._tweets)
 
     def __getitem__(self, pos):
         """See http://pybit.es/python-data-model.html"""
-        pass
+        return self._tweets[pos]
 
 
 if __name__ == "__main__":
 
-    for handle in ('pybites', '_juliansequeira', 'bbelderbos'):
+    for handle in ('pybites', 'techmoneykids', 'bbelderbos'):
         print('--- {} ---'.format(handle))
         user = UserTweets(handle)
         for tw in user[:5]:
