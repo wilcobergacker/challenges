@@ -27,7 +27,7 @@ class MyStreamer(TwythonStreamer):
         here data will be a Python object representing a tweet"""
 
         # only want to collect English-language tweets
-        if data['lang'] == 'en':
+        if data['lang'] == 'nl':
             print(data)
             with open(OUTPUT, 'a') as f:
                 f.write(json.dumps(data) + '\n')
