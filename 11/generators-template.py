@@ -15,21 +15,33 @@ $ for i in ../*/*py; do grep ^import $i|sed 's/import //g' ; done | sort | uniq 
    1 datetime
 """
 
+from collections import Counter
+from glob import iglob
+import re
+
 def gen_files(pat):
-    pass
+    yield from iglob(pat)
 
 def gen_lines(files):
-    pass
+    for fi in files:
+        with open(fi) as f:
+            yield from f.readlines()
 
 def gen_grep(lines, pattern):
-    pass
+    for line in lines:
+        m = pattern.match(line.rstrip())
+        if m:
+            yield m.group(1)
 
-def gen_count(lines):
-    pass
+def gen_count(modules):
+    yield from Counter(modules).most_common()
 
 
 if __name__ == "__main__":
     # call the generators, passing one to the other
     files = gen_files('../*/*.py')
     lines = gen_lines(files)
-    # etc
+    modules = gen_grep(lines, re.compile(r'^import (\w+)'))
+    for mod,count in gen_count(modules):
+        print('{:<2} {}'.format(count, mod))
+
