@@ -126,7 +126,7 @@ if __name__ == "__main__":
         else:
             print('Draw')
 
-        if 'n' in input('Do you want to play again? [yn ').lower():
+        if 'n' in input('Do you want to play again? [yn] ').lower():
             print('Goodbye')
             break
 
