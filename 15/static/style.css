@@ -1,20 +1,29 @@
-/* some styles, add/update/delete as you want */
+.main {
+	padding-left: 100px;
+	padding-right: 100px;
+	text-align: left;
+}
 
-body {
+h1 {
 	text-align: center;
 }
 
-.centered {
-	margin: auto;
-	width: 20%;
+.centered-text {
+	text-align: center;
 }
 
-.thick-border {
-	border: 3px solid black;
+th, td , table {
+	width: 20%;
+	border: 1px solid black;
 	border-collapse: collapse;
 }
 
-th, td {
+tr:nth-child(even) {
+	background-color: #e1e2f7;
+}
+
+
+.border {
 	border: 1px solid black;
 	border-collapse: collapse;
 }
